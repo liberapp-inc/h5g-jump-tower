@@ -8,7 +8,7 @@
 プロジェクトフォルダと同じ階層にゲームライブラリを配置してください。
 
 ```
-h5g-guardian/
+h5g-jump-tower/
 egret-game-library-master/
 ```
 
