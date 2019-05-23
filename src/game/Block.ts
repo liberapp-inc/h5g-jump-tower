@@ -3,11 +3,8 @@
 
 class Block extends PhysicsObject{
 
-    static newBase( px:number, py:number ):Block{
-        return new Block( px, py, Util.w( BLOCK_SIZE_PER_W * 2 ), Util.h( BLOCK_SIZE_PER_H ), true, 0, 0 );
-    }
     static newBlock( px:number, py:number, scale:number, vx:number ):Block{
-        return new Block( px, py, Util.w( BLOCK_SIZE_PER_W * 2 * scale ), Util.w( BLOCK_SIZE_PER_W * scale ), false, vx, 0 );
+        return new Block( px, py, Util.w( BLOCK_SIZE_PER_W * scale ), Util.h( BLOCK_SIZE_PER_H * scale ), vx, 0 );
     }
     
     static blocks:Block[] = [];
@@ -15,16 +12,22 @@ class Block extends PhysicsObject{
     sizeW:number;
     sizeH:number;
     color:number;
-    base:boolean;
+    x:number;
+    y:number;
+    vx:number;
+    vy:number;
 
-    constructor( px:number, py:number, w:number, h:number, base:boolean, vx:number, vy:number ) {
+    constructor( px:number, py:number, w:number, h:number, vx:number, vy:number ) {
         super();
 
         Block.blocks.push(this);
         this.sizeW = w;
         this.sizeH = h;
         this.color = BLOCK_COLOR;
-        this.base = base;
+        this.x = px;
+        this.y = py;
+        this.vx = vx;
+        this.vy = vy;
         this.setDisplay( px, py );
         this.setBody( px, py );
         this.display.rotation = this.body.angle * 180 / Math.PI;
@@ -52,10 +55,7 @@ class Block extends PhysicsObject{
     }
 
     setBody( px:number, py:number ){
-        if( this.base )
-            this.body = new p2.Body( {gravityScale:0, mass:1, position:[this.p2m(px), this.p2m(py)], type:p2.Body.STATIC} );
-        else
-            this.body = new p2.Body( {gravityScale:0, mass:1, position:[this.p2m(px), this.p2m(py)]} );
+        this.body = new p2.Body( {gravityScale:0, mass:1, position:[this.p2m(px), this.p2m(py)]} );
         this.body.addShape(new p2.Box( { width:this.p2m(this.sizeW), height:this.p2m(this.sizeH), collisionGroup:PHYSICS_GROUP_BLOCK, collisionMask:PHYSICS_GROUP_PLAYER|PHYSICS_GROUP_BLOCK } ), [0, 0], 0);
         this.body.displays = [this.display];
         PhysicsObject.world.addBody(this.body);
@@ -64,9 +64,22 @@ class Block extends PhysicsObject{
     fixedUpdate() {
         Camera2D.transform( this.display );
 
-        const r = this.body.boundingRadius;
-        if( (this.display.x - Util.width*0.5)**2 > (Util.width*0.5+r)**2 || this.display.y > Util.height+r ){
-            this.destroy();
+        if( this.body.gravityScale <= 0 ){
+            // 横移動中
+            if( this.body.velocity[1] == 0 ){
+                this.x += this.vx;
+                this.y += this.vy;
+                this.px = this.x;
+                this.py = this.y;
+                this.body.velocity[0] = this.vx;
+                this.body.velocity[1] = this.vy;
+            }else{
+                this.body.gravityScale = 1;
+            }
+        }
+        else{
+            // 物理
+            
         }
     }
 }

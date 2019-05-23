@@ -3,8 +3,8 @@
 
 const PIXEL_PER_METER = 1;
 const PLAYER_RADIUS_PER_W = 1/18;
-const BLOCK_IN_W = 3;
-const BLOCK_IN_H = 12;
+const BLOCK_IN_W = 4;
+const BLOCK_IN_H = 8;
 const BLOCK_SIZE_PER_W = 1 / BLOCK_IN_W;
 const BLOCK_SIZE_PER_H = 1 / BLOCK_IN_H;
 
@@ -25,8 +25,8 @@ class Game {
     static loadSceneGamePlay() {
         PhysicsObject.deltaScale = 1;
         new Score();
-        new Player( Util.w(0.5), Util.h(0.7) );
-        Block.newBase( Util.w(0.5), Util.h(0.9) );
+        Base.newBase( 0, 0 );
+        new Player( 0, 0 - Util.h(BLOCK_SIZE_PER_H*0.5) - Util.w(PLAYER_RADIUS_PER_W*1.1) );
         new Wave();
         new StartMessage();
     }

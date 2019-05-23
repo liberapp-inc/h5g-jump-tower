@@ -7,6 +7,7 @@ class Player extends PhysicsObject{
 
     radius:number;
     button:Button;
+    topBlockY:number = 0;
     state:()=>void = this.stateNone;
     step:number = 0;
     scale:number = 1;
@@ -48,18 +49,44 @@ class Player extends PhysicsObject{
         this.body.addShape(new p2.Circle({ radius:this.p2m(this.radius), collisionGroup:PHYSICS_GROUP_PLAYER, collisionMask:PHYSICS_GROUP_BLOCK }));
         this.body.displays = [this.display];
         PhysicsObject.world.addBody(this.body);
-        PhysicsObject.world.on("impact",  this.conflict, this);
+        PhysicsObject.world.on("beginContact", this.beginContact, this);
+        PhysicsObject.world.on("endContact",   this.endContact,   this);
     }
 
-    conflict(e){
-        this.scale = 1.2;
-        this.hit = true;
+    beginContact(e){
+        const bodyA:p2.Body = e.bodyA;
+        const bodyB:p2.Body = e.bodyB;
+        if( bodyA == this.body || bodyB == this.body ){
+            this.scale = 1.2;
+            this.hit = true;
+        }
+    }
+    endContact(e){
+        const bodyA:p2.Body = e.bodyA;
+        const bodyB:p2.Body = e.bodyB;
+        if( bodyA == this.body || bodyB == this.body ){
+            this.scale = 1.0;
+            this.hit = false;
+        }
     }
 
     fixedUpdate() {
         this.state();
-        this.scale += (1 - this.scale) * 0.2;
+        // this.scale += (1 - this.scale) * 0.2;
+        this.cameraAtTop();
+//        this.hit = false;
+    }
+
+    cameraAtTop(){
+        let top = Math.min( this.topBlockY, this.py, Camera2D.y + Util.h(0.25) ) - Util.h(0.25);
+
+        Camera2D.x = Util.w(-0.5);
+        Camera2D.y = Math.min( top, -Util.h(0.25) );
         Camera2D.transform( this.display, this.scale );
+    }
+
+    cameraOverall(){
+
     }
 
     setStateNone(){
@@ -74,10 +101,14 @@ class Player extends PhysicsObject{
         this.step = 0;
     }
     stateStand() {
-        const landing = this.hit && this.body.velocity[1]**2 <= (this.radius*0.1)**2;
-        
-        if( landing && this.button.press ){
-            this.setStateJump();
+        if( this.hit ){
+            this.body.velocity[0] *= 0.75;
+            this.body.velocity[1] *= 0.75;
+
+            // jump
+            if( this.button.press ){
+                this.setStateJump();
+            }
         }
     }
 
