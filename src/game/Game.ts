@@ -3,12 +3,13 @@
 
 const PIXEL_PER_METER = 1;
 const PLAYER_RADIUS_PER_W = 1/18;
-const BLOCK_IN_W = 4;
-const BLOCK_IN_H = 8;
+const BLOCK_IN_W = 2.5;
+const BLOCK_IN_H = 10;
 const BLOCK_SIZE_PER_W = 1 / BLOCK_IN_W;
 const BLOCK_SIZE_PER_H = 1 / BLOCK_IN_H;
 
-const PHYSICS_GRAVITY_PER_H = 0.5;
+const JUMP_VELOCITY_PER_H = 0.3;
+const PHYSICS_GRAVITY_PER_H = 0.15;
 const PHYSICS_GROUP_PLAYER = 1<<1;
 const PHYSICS_GROUP_BLOCK = 1<<2;
 
@@ -19,6 +20,8 @@ const FONT_COLOR = 0xFFFFFF;
 const PLAYER_COLOR = 0xFFFFFF;
 const BLOCK_COLOR  = 0x5EFEFF;
 const BLOCK_COLOR2 = 0x8A41FF;
+const BASE_COLOR = 0x4080FF;
+const LINE_COLOR = 0x404040;
 
 class Game {
 

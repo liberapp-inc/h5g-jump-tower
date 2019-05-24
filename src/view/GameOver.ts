@@ -3,45 +3,45 @@
 
 class GameOver extends GameObject{
 
-    // textGameOver:egret.TextField = null;
-    textScore:egret.TextField = null;
+    texts:egret.TextField[] = [];
     retryButton:Button = null;
     step:number = 0;
-    readonly fadeInFrame:number = 60;
+    readonly fadeInFrame:number = 64;
 
     constructor() {
         super();
 
-        // this.textGameOver = Util.newTextField("GAME OVER", Util.width / 10, FONT_COLOR, 0.5, 0.40, true, false);
-        // GameObject.display.addChild( this.textGameOver );
-        
         if( Score.I ){
+            this.texts[0] = Util.newTextField("SCORE : " + Score.I.point.toFixed(), Util.width / 12, FONT_COLOR, 0.5, 0.25, true, false);
+            GameObject.display.addChild( this.texts[0] );
+
             if( Score.I.point >= Score.I.bestScore ){
                 egret.localStorage.setItem(SAVE_KEY_BESTSCORE, Score.I.point.toFixed() ); // string
+                this.texts[1] = Util.newTextField("NEW RECORD!", Util.width / 13, FONT_COLOR, 0.5, 0.4, true, false);
+                this.texts[1].alpha = 0;
+                GameObject.display.addChild( this.texts[1] );
             }
-            this.textScore = Util.newTextField("SCORE : " + Score.I.point.toFixed(), Util.width / 14, FONT_COLOR, 0.5, 0.50, true, false);
-            GameObject.display.addChild( this.textScore );
         }
     }
 
     onDestroy() {
-        // GameObject.display.removeChild( this.textGameOver );
-        // this.textGameOver = null;
-        if( this.textScore ){
-            GameObject.display.removeChild( this.textScore );
-            this.textScore = null;
-        }
+        this.texts.forEach( text =>{ GameObject.display.removeChild( text ); });
+        this.texts = null;
     }
     
     update() {
-        if( this.step < this.fadeInFrame ){
-            this.step++;
+        this.step++;
+        if( this.step <= this.fadeInFrame ){
             const a = this.step / this.fadeInFrame;
-            // this.textGameOver.alpha = a;
-            this.textScore.alpha = a;
+            this.texts[0].alpha = a;
             
             if( this.step == this.fadeInFrame ){
                 this.retryButton = new Button("リトライ", Util.width/16, BACK_COLOR, 0.50, 0.65, 0.4, 0.1, FONT_COLOR, 1.0, this.onTapRetry );
+            }
+        }
+        else{
+            if( this.texts[1] ){
+                this.texts[1].alpha = ( 0x40 - (this.step & 0x3f) ) / 0x40;
             }
         }
      }

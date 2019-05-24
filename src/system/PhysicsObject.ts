@@ -42,7 +42,12 @@ abstract class PhysicsObject extends GameObject {
         PhysicsObject.height = PhysicsObject.pixelToMeter(Util.height);
 
         PhysicsObject.world = new p2.World();
+        console.log( "friction = "+PhysicsObject.world.defaultContactMaterial.friction );
+        console.log( "stiffness = "+PhysicsObject.world.defaultContactMaterial.stiffness );
+        console.log( "Relaxation = "+PhysicsObject.world.defaultContactMaterial.frictionRelaxation );
+        console.log( "Stuffness = "+PhysicsObject.world.defaultContactMaterial.frictionStuffness );
         PhysicsObject.world.gravity = [0, PhysicsObject.height * PHYSICS_GRAVITY_PER_H ];
+        PhysicsObject.world.defaultContactMaterial.friction = 1;    // default 0.3
         PhysicsObject.lastTime = Date.now();
         PhysicsObject.deltaScale = 1;
     }

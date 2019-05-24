@@ -16,7 +16,7 @@ class Base extends PhysicsObject{
 
         this.sizeW = w;
         this.sizeH = h;
-        this.color = BLOCK_COLOR;
+        this.color = BASE_COLOR;
         this.setDisplay( px, py );
         this.setBody( px, py );
         this.display.rotation = this.body.angle * 180 / Math.PI;
@@ -32,6 +32,7 @@ class Base extends PhysicsObject{
         GameObject.display.addChildAt(this.display, 1);
         shape.x = px;
         shape.y = py;
+        shape.graphics.lineStyle( 3, LINE_COLOR );
         shape.graphics.beginFill( this.color );
         shape.graphics.drawRect( -0.5*this.sizeW, -0.5*this.sizeH, this.sizeW, this.sizeH );
         shape.graphics.endFill();

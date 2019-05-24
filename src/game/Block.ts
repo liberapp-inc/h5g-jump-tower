@@ -3,12 +3,13 @@
 
 class Block extends PhysicsObject{
 
-    static newBlock( px:number, py:number, scale:number, vx:number ):Block{
-        return new Block( px, py, Util.w( BLOCK_SIZE_PER_W * scale ), Util.h( BLOCK_SIZE_PER_H * scale ), vx, 0 );
+    static newBlock( frame:number, px:number, py:number, scale:number, vx:number ):Block{
+        return new Block( frame, px, py, Util.w( BLOCK_SIZE_PER_W * scale ), Util.h( BLOCK_SIZE_PER_H ), vx, 0 );
     }
     
     static blocks:Block[] = [];
 
+    frame:number;
     sizeW:number;
     sizeH:number;
     color:number;
@@ -17,13 +18,14 @@ class Block extends PhysicsObject{
     vx:number;
     vy:number;
 
-    constructor( px:number, py:number, w:number, h:number, vx:number, vy:number ) {
+    constructor( frame:number, px:number, py:number, w:number, h:number, vx:number, vy:number ) {
         super();
 
         Block.blocks.push(this);
+        this.frame = frame;
         this.sizeW = w;
         this.sizeH = h;
-        this.color = BLOCK_COLOR;
+        this.color = randBool() ? BLOCK_COLOR : BLOCK_COLOR2;
         this.x = px;
         this.y = py;
         this.vx = vx;
@@ -49,6 +51,7 @@ class Block extends PhysicsObject{
         GameObject.display.addChildAt(this.display, 1);
         shape.x = px;
         shape.y = py;
+        shape.graphics.lineStyle(3, LINE_COLOR );
         shape.graphics.beginFill( this.color );
         shape.graphics.drawRect( -0.5*this.sizeW, -0.5*this.sizeH, this.sizeW, this.sizeH );
         shape.graphics.endFill();
@@ -62,10 +65,8 @@ class Block extends PhysicsObject{
     }
 
     fixedUpdate() {
-        Camera2D.transform( this.display );
-
+        // 等速横移動
         if( this.body.gravityScale <= 0 ){
-            // 横移動中
             if( this.body.velocity[1] == 0 ){
                 this.x += this.vx;
                 this.y += this.vy;
@@ -77,9 +78,14 @@ class Block extends PhysicsObject{
                 this.body.gravityScale = 1;
             }
         }
-        else{
-            // 物理
-            
+        Camera2D.transform( this.display );
+
+        // ミス判定　中央到達時にプレイヤーが下にいたらミス
+        if( (--this.frame) == 0 ){
+            Player.I.topBlockY = this.y;
+            // if( Player.I.py >= this.y ){
+            //     Player.I.miss();
+            // }
         }
     }
 }
