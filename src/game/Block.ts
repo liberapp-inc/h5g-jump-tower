@@ -3,8 +3,8 @@
 
 class Block extends PhysicsObject{
 
-    static newBlock( frame:number, px:number, py:number, scale:number, vx:number ):Block{
-        return new Block( frame, px, py, Util.w( BLOCK_SIZE_PER_W * scale ), Util.h( BLOCK_SIZE_PER_H ), vx, 0 );
+    static newBlock( frame:number, px:number, py:number, scale:number, vx:number, color:number ):Block{
+        return new Block( frame, px, py, Util.w( BLOCK_SIZE_PER_W * scale ), Util.h( BLOCK_SIZE_PER_H ), vx, 0, color );
     }
     
     static blocks:Block[] = [];
@@ -18,14 +18,14 @@ class Block extends PhysicsObject{
     vx:number;
     vy:number;
 
-    constructor( frame:number, px:number, py:number, w:number, h:number, vx:number, vy:number ) {
+    constructor( frame:number, px:number, py:number, w:number, h:number, vx:number, vy:number, color:number ) {
         super();
 
         Block.blocks.push(this);
         this.frame = frame;
         this.sizeW = w;
         this.sizeH = h;
-        this.color = randBool() ? BLOCK_COLOR : BLOCK_COLOR2;
+        this.color = color;
         this.x = px;
         this.y = py;
         this.vx = vx;
@@ -65,8 +65,8 @@ class Block extends PhysicsObject{
     }
 
     fixedUpdate() {
-        // 等速横移動
         if( this.body.gravityScale <= 0 ){
+            // 等速横移動
             if( this.body.velocity[1] == 0 ){
                 this.x += this.vx;
                 this.y += this.vy;
@@ -78,14 +78,14 @@ class Block extends PhysicsObject{
                 this.body.gravityScale = 1;
             }
         }
+        else{
+            // 自由落下
+        }
         Camera2D.transform( this.display );
 
-        // ミス判定　中央到達時にプレイヤーが下にいたらミス
+        // 中央まできたら高さ更新 ミス判定用
         if( (--this.frame) == 0 ){
             Player.I.topBlockY = this.y;
-            // if( Player.I.py >= this.y ){
-            //     Player.I.miss();
-            // }
         }
     }
 }

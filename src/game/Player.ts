@@ -82,7 +82,7 @@ class Player extends PhysicsObject{
         let top = Math.min( this.topBlockY-Util.h(0.25), this.py-Util.h(0.25), Camera2D.y );
 
         Camera2D.x = Util.w(-0.5);
-        Camera2D.y = Util.lerp( Camera2D.y, Math.min( top, -Util.h(0.25) ), 0.25 );
+        Camera2D.y = Util.lerp( Camera2D.y, Math.min( top, -Util.h(0.25) ), 1/8 );
         Camera2D.scale = 1;
         Camera2D.transform( this.display, this.scale );
     }
@@ -92,7 +92,7 @@ class Player extends PhysicsObject{
         let lower = 0;
         let range = lower - upper;
         let camScale = Util.height / range;
-        const rate = 1/16;
+        const rate = 1/32;
         Camera2D.x = Util.lerp( Camera2D.x, Util.w(-0.5)/camScale, rate );
         Camera2D.y = Util.lerp( Camera2D.y, Util.h(-0.5)/camScale + (lower + upper) * 0.5, rate );
         Camera2D.scale = Util.lerp( Camera2D.scale, camScale, rate );
